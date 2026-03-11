@@ -29,7 +29,7 @@ public class ScheduleNotificationImpl implements scheduleNotification {
     private UserRepository userRepository;
 
     @Override
-    @Scheduled(cron = " 1 * * * * *")
+    @Scheduled(cron = "${CRON_JOB}")
 //     "0 0 8,12 * * *"
     public void checkCertificateExpirationDate() {
 
