@@ -1,0 +1,122 @@
+<!-- src/main/resources/static/certificate_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Certificate Form</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #cb7a11, #2c2c2a);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-wrapper {
+      background: #fff;
+      padding: 2rem 3rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 500px;
+      animation: slideIn 0.8s ease;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.5rem 0 1rem 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      transition: border 0.3s;
+    }
+
+    input:focus {
+      border-color: #0072ff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #e7b70c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #cb7a11;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="form-wrapper">
+  <h2><img src="logo.png" alt="Logo" style="height: 50px; vertical-align: middle;"></h2>
+  <form id="certificateForm">
+    <input name="employeeId" placeholder="Employee ID" required />
+    <input name="employeeName" placeholder="Employee Name" required />
+    <input name="certificateId" placeholder="Certificate ID" required />
+    <input name="certificateName" placeholder="Certificate Name" required />
+    <input name="certificateType" placeholder="Certificate Type" required />
+    <input name="certificateNumber" placeholder="Certificate Number" required />
+    <label for="issuedDate">Issue Date:</label>
+    <input name="issuedDate" id="issuedDate" type="date" required />
+
+    <label for="expirationDate">Expiration Date:</label>
+    <input name="expirationDate" id="expirationDate" type="date" required />
+    <button type="submit">Save Certificate</button>
+  </form>
+</div>
+<script>
+  document.getElementById('certificateForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    try {
+      const res = await fetch('/certificate/api/v1/save-certificate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem("jwtToken")
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert('Certificate saved successfully!');
+        e.target.reset();
+      } else {
+        const errorMsg = await res.text();
+        alert('Error saving certificate: ' + errorMsg);
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
+    }
+  });
+</script>
+</body>
+</html>
